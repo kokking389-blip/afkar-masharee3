@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد ومطور أفكار المشاريع</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        dark: {
+                            800: '#1f2937',
+                            900: '#111827',
+                            950: '#030712'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #10b981;
+            color: #10b981;
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white;
+                color: black;
+            }
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="glass-card sticky top-0 z-50 border-b border-slate-800 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-gradient-to-tr from-emerald-600 to-teal-500 rounded-2xl shadow-lg shadow-emerald-500/20">
+                    <i class="fa-solid fa-lightbulb text-2xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">
+                        حاضنة أفكار المشاريع
+                    </h1>
+                    <p class="text-xs text-slate-400">ابتكر، خطط، واحسب جدوى مشروعك القادم بذكاء</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex flex-wrap justify-center gap-2 no-print bg-slate-900/60 p-1.5 rounded-xl border border-slate-800">
+                <button onclick="switchTab('generator')" id="tab-generator" class="tab-btn active px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i>
+                    <span>توليد الأفكار</span>
+                </button>
+                <button onclick="switchTab('canvas')" id="tab-canvas" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-diagram-project text-emerald-400"></i>
+                    <span>نموذج العمل و SWOT</span>
+                </button>
+                <button onclick="switchTab('feasibility')" id="tab-feasibility" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-emerald-400"></i>
+                    <span>حاسبة الجدوى</span>
+                </button>
+                <button onclick="switchTab('saved')" id="tab-saved" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-box-archive text-emerald-400"></i>
+                    <span>الأفكار المحفوظة</span>
+                    <span id="saved-count-badge" class="bg-emerald-500/20 text-emerald-300 text-xs px-2 py-0.5 rounded-full border border-emerald-500/30">0</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- Notification Toast Container -->
+        <div id="toast-container" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2"></div>
+
+        <!-- TAB 1: IDEA GENERATOR -->
+        <section id="view-generator" class="space-y-8">
+            <div class="glass-card p-6 md:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-24 -left-24 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                <div class="relative z-10">
+                    <h2 class="text-xl md:text-2xl font-bold mb-2 text-emerald-300 flex items-center gap-2">
+                        <i class="fa-solid fa-compass"></i> اختر المجال لتوليد الفكرة
+                    </h2>
+                    <p class="text-slate-400 text-sm mb-6">تخصيص الخيارات يمنحك نتائج أكثر دقة وملائمة لرؤيتك الاستثمارية</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">مجال المشروع</label>
+                            <select id="gen-category" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-emerald-500">
+                                <option value="all">جميع المجالات المتاحة</option>
+                                <option value="tech">التقنية والبرمجيات</option>
+                                <option value="ecommerce">التجارة الإلكترونية</option>
+                                <option value="services">الخدمات الاستشارية والميدانية</option>
+                                <option value="green">الطاقة والاستدامة البيئية</option>
+                                <option value="health">الصحة واللياقة البدنية</option>
+                                <option value="education">التعليم والتدريب الرقمي</option>
+                                <option value="ai">الذكاء الاصطناعي والأتمتة</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">حجم الميزانية المتوقعة</label>
+                            <select id="gen-budget" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-emerald-500">
+                                <option value="all">كل المستويات</option>
+                                <option value="منخفضة">منخفضة (رأس مال محدود جداً)</option>
+                                <option value="متوسطة">متوسطة (مشروع متوسط)</option>
+                                <option value="مرتفعة">مرتفعة (استثمار كبير)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">نوع النموذج العمل</label>
+                            <select id="gen-model" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-emerald-500">
+                                <option value="all">الكل</option>
+                                <option value="B2C">موجه للمستهلك الفرد (B2C)</option>
+                                <option value="B2B">موجه للشركات والمؤسسات (B2B)</option>
+                                <option value="SaaS">اشتراكات برمجية (SaaS)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="generateIdea()" class="flex-1 min-w-[200px] bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-dice text-lg"></i>
+                            <span>توليد فكرة جديدة</span>
+                        </button>
+                        <button onclick="openCustomIdeaModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <span>أدخل فكرتك الخاصة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generated Idea Card Display -->
+            <div id="idea-display-box" class="glass-card p-6 md:p-8 rounded-3xl border border-slate-700/80 shadow-2xl relative">
+                <div id="idea-card-placeholder" class="text-center py-12">
+                    <i class="fa-solid fa-lightbulb text-6xl text-slate-600 mb-4 animate-pulse"></i>
+                    <h3 class="text-lg font-semibold text-slate-400">انقر على "توليد فكرة جديدة" لبدء استكشاف المشاريع!</h3>
+                </div>
+
+                <div id="idea-card-content" class="hidden space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-700 pb-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span id="card-tag-category" class="bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1 rounded-full border border-emerald-500/20 font-bold">المجال</span>
+                                <span id="card-tag-budget" class="bg-amber-500/10 text-amber-400 text-xs px-3 py-1 rounded-full border border-amber-500/20 font-bold">الميزانية</span>
+                            </div>
+                            <h2 id="card-title" class="text-2xl md:text-3xl font-extrabold text-slate-100">اسم الفكرة البرمجية</h2>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="saveCurrentGeneratedIdea()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl shadow transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-bookmark"></i>
+                                <span>حفظ الفكرة</span>
+                            </button>
+                            <button onclick="transferToCanvas()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 px-4 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-diagram-next"></i>
+                                <span>تطويرها بالنموذج</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p id="card-description" class="text-slate-300 text-base md:text-lg leading-relaxed">وصف الفكرة بالتفصيل...</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                            <h4 class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-users"></i> الجمهور المستهدف
+                            </h4>
+                            <p id="card-audience" class="text-slate-300 text-sm">تفاصيل الجمهور...</p>
+                        </div>
+
+                        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                            <h4 class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-sack-dollar"></i> استراتيجية تحقيق الأرباح
+                            </h4>
+                            <p id="card-monetization" class="text-slate-300 text-sm">مصادر الدخل...</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <h4 class="text-sm font-bold text-emerald-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-star"></i> الميزات الرئيسية والفريدة
+                        </h4>
+                        <ul id="card-features" class="list-disc list-inside text-slate-300 text-sm space-y-1">
+                            <!-- Populated dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: BUSINESS MODEL CANVAS & SWOT -->
+        <section id="view-canvas" class="hidden space-y-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
+                <div>
+                    <h2 class="text-xl font-bold text-emerald-400">تطوير نموذج العمل التجاري وتحليل SWOT</h2>
+                    <p class="text-xs text-slate-400">قم بتعبئة بيانات المشروع لبناء استراتيجية انطلاق عملية ومتكاملة</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="saveCanvasData()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>حفظ النموذج</span>
+                    </button>
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i>
+                        <span>طباعة / PDF</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Current Idea Title Input -->
+            <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 flex items-center gap-4">
+                <label class="text-sm font-bold text-slate-300 whitespace-nowrap">اسم المشروع الحالي:</label>
+                <input type="text" id="canvas-project-title" placeholder="أدخل اسم المشـروع هنا..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-emerald-300 font-bold focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <!-- Business Model Canvas Grid -->
+            <div>
+                <h3 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-table-cells-large text-emerald-400"></i> مخطط نموذج العمل (Business Model Canvas)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <!-- Column 1: Key Partners -->
+                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 md:col-span-1 space-y-2">
+                        <label class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                            <i class="fa-solid fa-handshake"></i> الشركاء الرئيسيون
+                        </label>
+                        <textarea id="bmc-partners" rows="6" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="من هم الموردون، والشركاء الاستراتيجيين؟"></textarea>
+                    </div>
+
+                    <!-- Column 2: Key Activities & Resources -->
+                    <div class="md:col-span-1 space-y-4">
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2">
+                            <label class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check"></i> الأنشطة الرئيسية
+                            </label>
+                            <textarea id="bmc-activities" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="العمليات الأساسية لتقديم المنتج"></textarea>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2">
+                            <label class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                                <i class="fa-solid fa-boxes-stacked"></i> الموارد الرئيسية
+                            </label>
+                            <textarea id="bmc-resources" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="الأصول والموارد البشرية/التقنية"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Value Proposition -->
+                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-emerald-500/30 md:col-span-1 space-y-2 shadow-lg shadow-emerald-500/5">
+                        <label class="font-bold text-sm text-emerald-300 flex items-center gap-2">
+                            <i class="fa-solid fa-gem"></i> القيمة المضافة المقترحة
+                        </label>
+                        <textarea id="bmc-value" rows="7" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="ما المشكلة التي نحلها؟ ما القيمة المميزة التي نقدمها؟"></textarea>
+                    </div>
+
+                    <!-- Column 4: Customer Relationships & Channels -->
+                    <div class="md:col-span-1 space-y-4">
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2">
+                            <label class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                                <i class="fa-solid fa-heart"></i> علاقات العملاء
+                            </label>
+                            <textarea id="bmc-relations" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="كيف نتفاعل ونحتفظ بالعملاء؟"></textarea>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2">
+                            <label class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                                <i class="fa-solid fa-truck-fast"></i> قنوات التوزيع
+                            </label>
+                            <textarea id="bmc-channels" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="كيف نصل للعملاء؟"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Column 5: Customer Segments -->
+                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 md:col-span-1 space-y-2">
+                        <label class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                            <i class="fa-solid fa-users-between-lines"></i> شرائح العملاء
+                        </label>
+                        <textarea id="bmc-segments" rows="6" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="من المستهدفون بالخدمة/المنتج؟"></textarea>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: Cost Structure & Revenue Streams -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="font-bold text-sm text-rose-400 flex items-center gap-2">
+                            <i class="fa-solid fa-money-bill-transfer"></i> هيكل التكاليف (Cost Structure)
+                        </label>
+                        <textarea id="bmc-costs" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="أهم التكاليف التشغيلية والتأسيسية..."></textarea>
+                    </div>
+                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                            <i class="fa-solid fa-coins"></i> مصادر الإيرادات (Revenue Streams)
+                        </label>
+                        <textarea id="bmc-revenue" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="طرق تحقيق الدخل والمبيعات..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SWOT Analysis Matrix -->
+            <div class="pt-6">
+                <h3 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-emerald-400"></i> تحليل الرباعي (SWOT Analysis)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Strengths -->
+                    <div class="bg-emerald-950/30 p-4 rounded-2xl border border-emerald-500/30 space-y-2">
+                        <label class="font-bold text-sm text-emerald-400 flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved"></i> نقاط القوة (Strengths)
+                        </label>
+                        <textarea id="swot-strengths" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="ما ميزاتك التنافسية؟"></textarea>
+                    </div>
+                    <!-- Weaknesses -->
+                    <div class="bg-amber-950/30 p-4 rounded-2xl border border-amber-500/30 space-y-2">
+                        <label class="font-bold text-sm text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> نقاط الضعف (Weaknesses)
+                        </label>
+                        <textarea id="swot-weaknesses" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-amber-500" placeholder="ما هي التحديات أو الموارد المفقودة؟"></textarea>
+                    </div>
+                    <!-- Opportunities -->
+                    <div class="bg-blue-950/30 p-4 rounded-2xl border border-blue-500/30 space-y-2">
+                        <label class="font-bold text-sm text-blue-400 flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-trend-up"></i> الفرص المتاحة (Opportunities)
+                        </label>
+                        <textarea id="swot-opportunities" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500" placeholder="ما التوجهات القادمة بالسوق؟"></textarea>
+                    </div>
+                    <!-- Threats -->
+                    <div class="bg-rose-950/30 p-4 rounded-2xl border border-rose-500/30 space-y-2">
+                        <label class="font-bold text-sm text-rose-400 flex items-center gap-2">
+                            <i class="fa-solid fa-skull-crossbones"></i> التهديدات والمخاطر (Threats)
+                        </label>
+                        <textarea id="swot-threats" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-rose-500" placeholder="المنافسون والقوانين المحتملة..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: FEASIBILITY CALCULATOR -->
+        <section id="view-feasibility" class="hidden space-y-8">
+            <div class="glass-card p-6 md:p-8 rounded-3xl border border-slate-800 shadow-2xl">
+                <h2 class="text-xl md:text-2xl font-bold text-emerald-400 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator"></i> حاسبة الجدوى الاقتصادية السريعة
+                </h2>
+                <p class="text-xs md:text-sm text-slate-400 mb-6">احسب نقطة التعادل والعائد على الاستثمار المتوقع لمشروعك بشكل تقديري مبسط</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Inputs -->
+                    <div class="space-y-4 md:col-span-1 bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+                        <h3 class="font-bold text-slate-200 border-b border-slate-800 pb-2 text-sm">الأرقام المالية التقديرية</h3>
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">تجهيزات التأسيس والأصول ($)</label>
+                            <input type="number" id="calc-setup-cost" value="5000" oninput="calculateFeasibility()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-emerald-300 focus:outline-none focus:border-emerald-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">المصاريف التشغيلية شهرياً ($)</label>
+                            <input type="number" id="calc-monthly-ops" value="800" oninput="calculateFeasibility()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-emerald-300 focus:outline-none focus:border-emerald-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">المبيعات / الإيراد الشهري ($)</label>
+                            <input type="number" id="calc-monthly-rev" value="2000" oninput="calculateFeasibility()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-emerald-300 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <!-- Outputs & Results -->
+                    <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs text-slate-400 font-bold">الربح الصافي الشهري</span>
+                                <h4 id="calc-net-profit" class="text-2xl font-extrabold text-emerald-400 mt-2">$1,200</h4>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">بعد خصم التكاليف التشغيلية الشهرية</p>
+                        </div>
+
+                        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs text-slate-400 font-bold">نقطة التعادل (استرداد رأس المال)</span>
+                                <h4 id="calc-payback" class="text-2xl font-extrabold text-amber-400 mt-2">4.2 أشهر</h4>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">الوقت المتوقع لاستعادة تكاليف التأسيس</p>
+                        </div>
+
+                        <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between sm:col-span-2">
+                            <div>
+                                <span class="text-xs text-slate-400 font-bold">معدل العائد السنوي التقديري (ROI)</span>
+                                <h4 id="calc-roi" class="text-3xl font-extrabold text-teal-300 mt-2">288%</h4>
+                            </div>
+                            <div class="w-full bg-slate-950 rounded-full h-3 mt-4 overflow-hidden border border-slate-800">
+                                <div id="calc-roi-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-3 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: SAVED IDEAS & NOTEBOOK -->
+        <section id="view-saved" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
+                <div>
+                    <h2 class="text-xl font-bold text-emerald-400">دفتر وحافظة الأفكار</h2>
+                    <p class="text-xs text-slate-400">إدارة ومتابعة الأفكار التي قمت بحفظها وتطويرها</p>
+                </div>
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <input type="text" id="search-saved" oninput="renderSavedIdeas()" placeholder="بحث في الأفكار..." class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 w-full md:w-60">
+                    <button onclick="exportIdeasJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 p-2.5 rounded-xl text-xs flex items-center gap-1 whitespace-nowrap">
+                        <i class="fa-solid fa-download"></i>
+                        <span>تصدير</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="saved-ideas-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamic List Items will be injected here -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Custom Idea Input Modal -->
+    <div id="modal-custom-idea" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-emerald-400">إضافة فكرة مشروع جديدة</h3>
+                <button onclick="closeCustomIdeaModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">اسم المشروع</label>
+                    <input type="text" id="custom-title" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">المجال</label>
+                    <input type="text" id="custom-category" placeholder="مثال: خدمات، متجر إلكتروني..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">وصف الفكرة</label>
+                    <textarea id="custom-desc" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeCustomIdeaModal()" class="px-4 py-2 rounded-xl text-xs text-slate-400 hover:bg-slate-800">إلغاء</button>
+                <button onclick="saveCustomIdeaSubmit()" class="px-5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow">حفظ الفكرة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-slate-500 text-xs no-print">
+        <p>منصة مولد ومطور أفكار المشاريع &copy; 2026 - جميع الحقوق محفوظة</p>
+    </footer>
+
+    <script>
+        /* Pre-populated Startup Idea Database */
+        const ideaDatabase = [
+            {
+                id: '1',
+                title: 'منصة إدارة اشتراكات الأسر والتنبيهات',
+                category: 'tech',
+                budgetCategory: 'منخفضة',
+                model: 'SaaS',
+                description: 'تطبيق ذكي يساعد العائلات والمجموعات على تنظيم وتتبع جميع الاشتراكات الفردية والجماعية (خدمات البث، الفواتير، النوادي) والتنبيه قبل موعد التجديد.',
+                targetAudience: 'الأسر والأفراد الراغبين في ضبط وتنظيم مصروفاتهم الشهرية.',
+                monetization: 'اشتراك شهري رمزى (Freemium) + نسبة من العروض الحصرية.',
+                features: ['أتمتة تنبيهات التجديد', 'تقارير مصروفات شهرية', 'إمكانية المشاركة مع أفراد العائلة']
+            },
+            {
+                id: '2',
+                title: 'متجر استبدال وتأجير الملابس المدرسية والمستدامة',
+                category: 'ecommerce',
+                budgetCategory: 'متوسطة',
+                model: 'B2C',
+                description: 'منصة إلكترونية تتيح لأولياء الأمور تبادل، شراء، أو تأجير أزياء المدارس والمناسبات المستعملة بحالة ممتازة لتقليل الهدر المالي والبيئي.',
+                targetAudience: 'العائلات وأولياء أمور الطلاب.',
+                monetization: 'عمولة على كل عملية تبادل أو بيع + عمولات الفحص والشحن.',
+                features: ['فحص جودة المنتج قبل العرض', 'خدمة توصيل سريعة', 'نظام نقاط للمستبدلين']
+            },
+            {
+                id: '3',
+                title: 'منصة صيانة ومساعدة استشارية بالذكاء الاصطناعي للمنازل',
+                category: 'ai',
+                budgetCategory: 'متوسطة',
+                model: 'B2C',
+                description: 'تطبيق يتيح للمستخدم تصوير الأعطال المنزلية (سباكة، كهرباء) ليقوم الذكاء الاصطناعي بتشخيص المشكلة واقتراح الحل فوراً أو ربطه بفني معتمد.',
+                targetAudience: 'أصحاب المنازل والعقارات والشركات الصغرى.',
+                monetization: 'عمولة من الفنيين والمزودين + خطط اشتراك للمجمعات السكنية.',
+                features: ['تشخيص فوري للصور والفيديو', 'ربط مع فنيين موثوقين', 'تقدير أسعار قطع الغيار']
+            },
+            {
+                id: '4',
+                title: 'أكاديمية تدريبية رقمية للمهارات المهنية السريعة',
+                category: 'education',
+                budgetCategory: 'منخفضة',
+                model: 'B2C',
+                description: 'منصة دورات قصيرة ومكثفة تفاعلية تركز على المهارات الأكثر طلباً في سوق العمل مع تطبيق عملي ومتابعة من مدربين.',
+                targetAudience: 'الخريجون والباحثون عن تطوير مهاراتهم السريعة.',
+                monetization: 'رسوم الشهادات والمسارات التعليمية + اشتراكات الشركات.',
+                features: ['مشاريع تطبيقية حقيقية', 'شهادات معتمدة', 'جلسات توجيه مباشر']
+            },
+            {
+                id: '5',
+                title: 'شبكة إعادة تدوير الفائض الغذائي للمطاعم',
+                category: 'green',
+                budgetCategory: 'مرتفعة',
+                model: 'B2B',
+                description: 'منصة لوجستية تربط الفنادق والمطاعم والمصانع بالجهات المستفيدة أو مصانع الأسمدة العضوية للاستفادة من الفائض الغذائي.',
+                targetAudience: 'المطاعم، الفنادق، المصانع، ومؤسسات التدوير.',
+                monetization: 'عقود إدارة النفايات العضوية مع الشركات الكبيره.',
+                features: ['تتبع لوجستي مباشر', 'تقارير أثر بيئي موثقة', 'نظام أتمتة الجمع']
+            }
+        ];
+
+        /* Application State */
+        let savedIdeas = JSON.parse(localStorage.getItem('app_saved_ideas') || '[]');
+        let currentGeneratedIdea = null;
+
+        /* Init Function */
+        window.onload = function() {
+            updateSavedBadge();
+            renderSavedIdeas();
+            calculateFeasibility();
+        };
+
+        function switchTab(tabName) {
+            const tabs = ['generator', 'canvas', 'feasibility', 'saved'];
+            tabs.forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('active');
+            });
+
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        function generateIdea() {
+            const category = document.getElementById('gen-category').value;
+            const budget = document.getElementById('gen-budget').value;
+            const model = document.getElementById('gen-model').value;
+
+            let filtered = ideaDatabase.filter(item => {
+                return (category === 'all' || item.category === category) &&
+                       (budget === 'all' || item.budgetCategory === budget) &&
+                       (model === 'all' || item.model === model);
+            });
+
+            if (filtered.length === 0) {
+                filtered = ideaDatabase; // Fallback to all if no exact filters match
+            }
+
+            const selected = filtered[Math.floor(Math.random() * filtered.length)];
+            currentGeneratedIdea = selected;
+
+            // Update UI Card
+            document.getElementById('idea-card-placeholder').classList.add('hidden');
+            document.getElementById('idea-card-content').classList.remove('hidden');
+
+            document.getElementById('card-title').innerText = selected.title;
+            document.getElementById('card-description').innerText = selected.description;
+            document.getElementById('card-audience').innerText = selected.targetAudience;
+            document.getElementById('card-monetization').innerText = selected.monetization;
+            document.getElementById('card-tag-category').innerText = getCategoryName(selected.category);
+            document.getElementById('card-tag-budget').innerText = `الميزانية: ${selected.budgetCategory}`;
+
+            const featuresUl = document.getElementById('card-features');
+            featuresUl.innerHTML = '';
+            selected.features.forEach(f => {
+                const li = document.createElement('li');
+                li.innerText = f;
+                featuresUl.appendChild(li);
+            });
+
+            showToast('تم توليد فكرة جديدة بنجاح!');
+        }
+
+        function getCategoryName(key) {
+            const map = {
+                tech: 'تقنية',
+                ecommerce: 'تجارة إلكترونية',
+                services: 'خدمات',
+                green: 'طاقة واستدامة',
+                health: 'صحة',
+                education: 'تعليم',
+                ai: 'ذكاء اصطناعي'
+            };
+            return map[key] || 'عام';
+        }
+
+        function saveCurrentGeneratedIdea() {
+            if (!currentGeneratedIdea) return;
+            
+            const exists = savedIdeas.some(i => i.title === currentGeneratedIdea.title);
+            if (exists) {
+                showToast('الفكرة محفوظة مسبقاً في قائمة أفكارك!');
+                return;
+            }
+
+            const newSaved = {
+                ...currentGeneratedIdea,
+                id: Date.now().toString(),
+                status: 'قيد التقييم',
+                rating: 4,
+                savedAt: new Date().toLocaleDateString('ar-EG')
+            };
+
+            savedIdeas.unshift(newSaved);
+            localStorage.setItem('app_saved_ideas', JSON.stringify(savedIdeas));
+            updateSavedBadge();
+            renderSavedIdeas();
+            showToast('تم حفظ الفكرة في دفترك بنجاح!');
+        }
+
+        function transferToCanvas() {
+            if (!currentGeneratedIdea) return;
+            document.getElementById('canvas-project-title').value = currentGeneratedIdea.title;
+            document.getElementById('bmc-value').value = currentGeneratedIdea.description;
+            document.getElementById('bmc-segments').value = currentGeneratedIdea.targetAudience;
+            document.getElementById('bmc-revenue').value = currentGeneratedIdea.monetization;
+            switchTab('canvas');
+            showToast('تم نقل البيانات إلى نموذج العمل التجاري!');
+        }
+
+        function calculateFeasibility() {
+            const setup = parseFloat(document.getElementById('calc-setup-cost').value) || 0;
+            const ops = parseFloat(document.getElementById('calc-monthly-ops').value) || 0;
+            const rev = parseFloat(document.getElementById('calc-monthly-rev').value) || 0;
+
+            const netMonthly = rev - ops;
+            document.getElementById('calc-net-profit').innerText = `$${netMonthly.toLocaleString()}`;
+
+            if (netMonthly <= 0) {
+                document.getElementById('calc-payback').innerText = 'غير ربحي حالياً';
+                document.getElementById('calc-roi').innerText = '0%';
+                document.getElementById('calc-roi-bar').style.width = '0%';
+                return;
+            }
+
+            const paybackMonths = (setup / netMonthly).toFixed(1);
+            document.getElementById('calc-payback').innerText = `${paybackMonths} أشهر`;
+
+            const annualProfit = netMonthly * 12;
+            const roi = setup > 0 ? ((annualProfit / setup) * 100).toFixed(0) : 100;
+            document.getElementById('calc-roi').innerText = `${roi}%`;
+            
+            const barWidth = Math.min(Math.max(roi / 3, 5), 100);
+            document.getElementById('calc-roi-bar').style.width = `${barWidth}%`;
+        }
+
+        function renderSavedIdeas() {
+            const listEl = document.getElementById('saved-ideas-list');
+            const search = document.getElementById('search-saved').value.toLowerCase();
+            listEl.innerHTML = '';
+
+            const filtered = savedIdeas.filter(i => 
+                i.title.toLowerCase().includes(search) || 
+                i.description.toLowerCase().includes(search)
+            );
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="col-span-full text-center py-12 glass-card rounded-2xl">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-600 mb-2"></i>
+                        <p class="text-slate-400 text-sm">لا توجد أفكار محفوظة حالياً في الحافظة</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(idea => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-5 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between';
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-0.5 rounded-full border border-emerald-500/20 font-bold">${getCategoryName(idea.category)}</span>
+                            <span class="text-xs text-slate-500">${idea.savedAt || ''}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-100">${idea.title}</h3>
+                        <p class="text-xs text-slate-400 line-clamp-3">${idea.description}</p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-800 flex justify-between items-center">
+                        <button onclick="loadSavedToCanvas('${idea.id}')" class="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-pen"></i> تطوير بالنموذج
+                        </button>
+                        <button onclick="deleteSavedIdea('${idea.id}')" class="text-xs text-rose-400 hover:text-rose-300">
+                            <i class="fa-solid fa-trash"></i> حذف
+                        </button>
+                    </div>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function deleteSavedIdea(id) {
+            savedIdeas = savedIdeas.filter(i => i.id !== id);
+            localStorage.setItem('app_saved_ideas', JSON.stringify(savedIdeas));
+            updateSavedBadge();
+            renderSavedIdeas();
+            showToast('تم حذف الفكرة من دفترك.');
+        }
+
+        function loadSavedToCanvas(id) {
+            const idea = savedIdeas.find(i => i.id === id);
+            if (!idea) return;
+            document.getElementById('canvas-project-title').value = idea.title;
+            document.getElementById('bmc-value').value = idea.description;
+            switchTab('canvas');
+        }
+
+        function updateSavedBadge() {
+            document.getElementById('saved-count-badge').innerText = savedIdeas.length;
+        }
+
+        /* Custom Modal Logic */
+        function openCustomIdeaModal() {
+            document.getElementById('modal-custom-idea').classList.remove('hidden');
+        }
+
+        function closeCustomIdeaModal() {
+            document.getElementById('modal-custom-idea').classList.add('hidden');
+        }
+
+        function saveCustomIdeaSubmit() {
+            const title = document.getElementById('custom-title').value.trim();
+            const category = document.getElementById('custom-category').value.trim();
+            const desc = document.getElementById('custom-desc').value.trim();
+
+            if (!title) {
+                showToast('يرجى كتابة عنوان الفكرة على الأقل!');
+                return;
+            }
+
+            const newIdea = {
+                id: Date.now().toString(),
+                title: title,
+                category: category || 'عام',
+                budgetCategory: 'غير حدد',
+                description: desc,
+                targetAudience: 'غير محدد',
+                monetization: 'غير محدد',
+                savedAt: new Date().toLocaleDateString('ar-EG')
+            };
+
+            savedIdeas.unshift(newIdea);
+            localStorage.setItem('app_saved_ideas', JSON.stringify(savedIdeas));
+            updateSavedBadge();
+            renderSavedIdeas();
+            closeCustomIdeaModal();
+            showToast('تمت إضافة الفكرة الخاصة بنجاح!');
+        }
+
+        function saveCanvasData() {
+            showToast('تم حفظ نموذج العمل التجاري وSWOT بنجاح!');
+        }
+
+        function exportIdeasJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedIdeas, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "my_project_ideas.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-slate-800 text-emerald-300 border border-emerald-500/30 px-4 py-3 rounded-xl shadow-xl text-xs font-bold flex items-center gap-2 animate-bounce';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
